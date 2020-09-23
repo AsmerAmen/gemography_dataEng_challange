@@ -12,8 +12,10 @@ class News(scrapy.Spider):
         # 'https://www.bbc.com/news/av/world-54239887',
         # 'https://www.bbc.com/news/entertainment-arts-54179877',
         # 'https://www.bbc.com/news/world-middle-east-54235209',
-        'https://www.bbc.com/sport/football/54262570',
+        # 'https://www.bbc.com/sport/football/54262570',
         # 'https://www.bbc.com/sport/football/54259386',
+        # 'https://www.bbc.com/news/world-us-canada-54254141',
+        'https://www.bbc.com/news/world-54218131'
         ]
 
     def parse(self, response):
@@ -40,7 +42,14 @@ class News(scrapy.Spider):
         # Process the list into one string if extraction was successful.
         # Remove the style parts selected by mistake, since we need multiple levels of text extraction.
         article_text = '\n'.join([line for line in article_text if '.css' not in line]) if article_text else None
-        # article_text = re.sub(r'\nand\n', ' and ', article_text)
+
+        # Reshaping the string, which maybe distorted because embed links.
+        if article_text:
+            article_text = re.sub(r'\nand \n', 'and ', article_text)
+            article_text = re.sub(r' \n', ' ', article_text)
+            article_text = re.sub(r'\n,', ',', article_text)
+            article_text = re.sub(r'\n.\n', '.\n', article_text)
+
         # article_text = article_text.replace('\nand\n', ' and ')
         # Extract and process title
         article_title = response.css('h1::text').extract()
