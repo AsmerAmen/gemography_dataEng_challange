@@ -1,25 +1,29 @@
 import scrapy
+from ..items import NewsItem
+
 from pprint import pprint
 import re
+
 
 class News(scrapy.Spider):
     # Spider calling name
     name = 'news'
     start_urls = [
-        # 'https://www.bbc.com/news/technology-54244612',
-        # 'https://www.bbc.com/news/world-europe-54262279',
-        # 'https://www.bbc.com/news/world-us-canada-54258526',
-        # 'https://www.bbc.com/news/av/world-54239887',
-        # 'https://www.bbc.com/news/entertainment-arts-54179877',
-        # 'https://www.bbc.com/news/world-middle-east-54235209',
-        # 'https://www.bbc.com/sport/football/54262570',
-        # 'https://www.bbc.com/sport/football/54259386',
-        # 'https://www.bbc.com/news/world-us-canada-54254141',
+        'https://www.bbc.com/news/technology-54244612',
+        'https://www.bbc.com/news/world-europe-54262279',
+        'https://www.bbc.com/news/world-us-canada-54258526',
+        'https://www.bbc.com/news/av/world-54239887',
+        'https://www.bbc.com/news/entertainment-arts-54179877',
+        'https://www.bbc.com/news/world-middle-east-54235209',
+        'https://www.bbc.com/sport/football/54262570',
+        'https://www.bbc.com/sport/football/54259386',
+        'https://www.bbc.com/news/world-us-canada-54254141',
         'https://www.bbc.com/news/world-54218131'
         ]
 
     def parse(self, response):
 
+        item = NewsItem()
         # Articles have different structure for their main text,
         # And we got 2 types of text,
         #   1. The main body mainly p or b of class e5tfeyi2.
@@ -50,7 +54,6 @@ class News(scrapy.Spider):
             article_text = re.sub(r'\n,', ',', article_text)
             article_text = re.sub(r'\n.\n', '.\n', article_text)
 
-        # article_text = article_text.replace('\nand\n', ' and ')
         # Extract and process title
         article_title = response.css('h1::text').extract()
         article_title = article_title[0] if article_title else None
@@ -62,9 +65,11 @@ class News(scrapy.Spider):
         #
         article_url = response.url
 
-        print(article_title)
-        print(article_author)
-        print('\n')
-        print(article_text)
-        print('\n\n')
+        # Save details
+        item['title'] = article_title
+        item['text'] = article_text
+        item['author'] = article_author
+        item['url'] = article_url
+
+        yield item
 
