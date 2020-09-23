@@ -6,9 +6,10 @@ class News(scrapy.Spider):
     name = 'news'
     start_urls = [
         'https://www.bbc.com/news/technology-54244612',
-        'https://www.bbc.com/news/world-europe-54262279',
-        'https://www.bbc.com/news/world-us-canada-54258526',
-        'https://www.bbc.com/news/av/world-54239887'
+        # 'https://www.bbc.com/news/world-europe-54262279',
+        # 'https://www.bbc.com/news/world-us-canada-54258526',
+        # 'https://www.bbc.com/news/av/world-54239887'
+        'https://www.bbc.com/news/entertainment-arts-54179877'
         ]
 
     def parse(self, response):
@@ -38,14 +39,14 @@ class News(scrapy.Spider):
         article_title = article_title[0] if article_title else None
 
         # Extract and process Author if it was present.
-        article_author = response.css('.css-15hnagr-Contributor.e5xb54n0 ::text').extract()
-        article_author = ', '.join(article_author).replace('By', '').strip() if article_author else None
+        article_author = response.css('.css-15hnagr-Contributor.e5xb54n0, .byline__name').css(' ::text').extract()
+        article_author = article_author[0].replace('By', '').strip() if article_author else None
 
         #
         article_url = response.url
 
         print(article_title)
         print(article_author)
-        print(article_text)
+        # print(article_text)
         print('\n\n')
 
