@@ -1,3 +1,4 @@
 venv
 news/news/spiders/__pycache__
 .idea
+draft.py

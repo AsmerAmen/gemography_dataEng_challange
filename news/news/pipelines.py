@@ -17,7 +17,6 @@ class NewsPipeline:
     def create_connection(self):
         self.conn = pymongo.MongoClient(
             "mongodb+srv://asmer_amen:newpassword@cluster0.wjnt1.mongodb.net/news?retryWrites=true&w=majority")
-        # self.cur = self.conn.cursor()
 
     def create_table(self):
         db = self.conn['news']
