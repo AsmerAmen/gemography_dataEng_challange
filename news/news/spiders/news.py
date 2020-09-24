@@ -1,7 +1,5 @@
 import scrapy
 from ..items import NewsItem
-
-from pprint import pprint
 import re
 
 
@@ -12,7 +10,6 @@ def is_good_url(url):
         if exclude in url:
             return False
     return True
-
 
 
 class News(scrapy.Spider):
@@ -47,11 +44,7 @@ class News(scrapy.Spider):
     def parse_article(self, response):
 
         item = NewsItem()
-        # Articles have different structure for their main text,
-        # And we got 2 types of text,
-        #   1. The main body mainly p or b of class e5tfeyi2.
-        #   2. Subheads h2 or class e1fj1fc10
-        # Example articles: https://www.bbc.com/news/world-europe-54262279 , https://www.bbc.com/news/av/world-54239887
+        # Articles have different structures for their main text,
         article_text = response.css(
             '.css-83cqas-RichTextContainer.e5tfeyi2, .css-1jlqpzd-StyledHeading.e1fj1fc10,'
             ' .LongArticle-body .Text.gel-body-copy'
@@ -63,7 +56,6 @@ class News(scrapy.Spider):
             article_text = response.css('.story-body__inner').css('p, h2').css('::text').extract()
 
         # If the pages doesn't match any of the structures above, try the following.
-        # Example article: https://www.bbc.com/sport/football/54262570
         if not article_text:
             article_text = response.css('.qa-story-body.story-body p').css(' ::text').extract()
 

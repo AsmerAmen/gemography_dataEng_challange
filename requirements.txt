@@ -1,0 +1,6 @@
+Flask==1.1.2
+Flask-RESTful==0.3.8
+pymongo==3.6.0
+requests==2.24.0
+Scrapy==2.3.0
+scrapy-user-agents==0.1.1
