@@ -21,6 +21,9 @@ class News(scrapy.Spider):
     ]
 
     def parse(self, response):
+        # First page, extracts the articles' links and the sections links.
+        # Redirect these links to their parsing functions, if they don't have specific words in them, which imply the
+        # main content of the link is video or audio.
         articles_links = response.css('.gs-c-promo-heading.gs-o-faux-block-link__overlay-link.gel-pica-bold'
                                       '.nw-o-link-split__anchor::attr(href)').extract()
 
@@ -42,8 +45,10 @@ class News(scrapy.Spider):
                 yield response.follow(link, self.parse_article)
 
     def parse_article(self, response):
-
         item = NewsItem()
+
+        # Article text section
+
         # Articles have different structures for their main text,
         article_text = response.css(
             '.css-83cqas-RichTextContainer.e5tfeyi2, .css-1jlqpzd-StyledHeading.e1fj1fc10,'
@@ -95,12 +100,16 @@ class News(scrapy.Spider):
             article_text = re.sub(r'\n,', ',', article_text)
             article_text = re.sub(r'\n.\n', '.\n', article_text)
 
+        # Article title section
+
         # Extract and process title
         article_title = response.css(
             'h1,'
             ' .article-headline__text.b-reith-sans-font,'
             ' title').css('::text').extract()
         article_title = article_title[0] if article_title else None
+
+        # Article author section
 
         # Extract and process Author if it was present.
         article_author = response.css(
@@ -113,7 +122,8 @@ class News(scrapy.Spider):
             ' .Theme-Layer-BodyText--inner p.h-align-center,'
             ' .qa-contributor-name.gel-long-primer').css(' ::text').extract()
         article_author = article_author[0].replace('By', '').strip() if article_author else None
-        #
+
+        # URL extracted from the response object
         article_url = response.url
 
         # Save details

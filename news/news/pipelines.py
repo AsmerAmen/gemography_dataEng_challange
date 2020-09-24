@@ -27,4 +27,5 @@ class NewsPipeline:
 
     def process_item(self, item, spider):
         self.store_db(item)
+
         return item
